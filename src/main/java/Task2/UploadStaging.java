@@ -37,7 +37,7 @@ public class UploadStaging {
 	ConnectDatabase cdb;
 	PreparedStatement pst;
 	ResultSet rs;
-	
+
 	public UploadStaging() {
 		cdb = new ConnectDatabase();
 	}
@@ -145,7 +145,7 @@ public class UploadStaging {
 		}
 
 	}
-//update log ddau ong
+
 
 //	import dữ liệu vào table monhoc
 	public void loadMonHoc(MonHoc monhoc) {
@@ -180,7 +180,6 @@ public class UploadStaging {
 			for (SinhVien sinhvien : data) {
 				System.out.println(sinhvien);
 				uploadStaging.loadStudent(sinhvien);
-				
 			}
 			log.updateLog(Status.TR);
 			return true;
