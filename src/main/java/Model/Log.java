@@ -12,7 +12,7 @@ import java.util.List;
 import Constrants.Status;;
 
 public class Log {
-	static String PATH = "Data";
+	static String PATH = "Data/Register";
 
 	private int data_file_id;
 	private String file_name;
@@ -108,6 +108,14 @@ public class Log {
 		this.time_stamp_insert_staging = time_stamp_insert_staging;
 	}
 
+	public void setData_file_id(int data_file_id) {
+		this.data_file_id = data_file_id;
+	}
+
+	public int getData_file_id() {
+		return data_file_id;
+	}
+
 	public void insertListLog() {
 		List<Log> listLog = readDirectory(PATH);
 		for (int i = 0; i < listLog.size(); i++) {
@@ -169,6 +177,13 @@ public class Log {
 		return this;
 	}
 
+	public boolean getFileName(String fileName) {
+		sql = "select file_name from controldb.log where file_name like " + "'" + fileName + "%" + "'";
+		System.out.println(sql);
+		return false;
+
+	}
+
 	public void updateLog(Status new_status) {
 		sql = "UPDATE controldb.log SET file_status = ? WHERE data_file_id = ?";
 		try {
@@ -180,15 +195,12 @@ public class Log {
 			e.printStackTrace();
 		}
 	}
-	public void setData_file_id(int data_file_id) {
-		this.data_file_id = data_file_id;
-	}
-	public int getData_file_id() {
-		return data_file_id;
-	}
 
 	public static void main(String[] args) {
 		new Log().insertListLog();
+
+//		Log log = new Log();
+//		log.getFileName("sinhvien");
 	}
 
 }

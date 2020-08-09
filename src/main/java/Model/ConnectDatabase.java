@@ -45,7 +45,7 @@ public class ConnectDatabase {
 	public Connection connectDBControl() throws SQLException {
 		String result;
 
-		result = readFileFromFolder("../Configuration/DataConfig.txt");
+		result = readFileFromFolder("src/main/java/Configuration/DataConfig.txt");
 		String[] connectInfo = result.split("\n");
 		String driver = connectInfo[0];
 		String url = connectInfo[1];

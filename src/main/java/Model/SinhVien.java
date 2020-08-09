@@ -1,6 +1,6 @@
 package Model;
 
-public class Student {
+public class SinhVien {
 	private int num;
 	private String id;
 	private String first_name;
@@ -13,10 +13,10 @@ public class Student {
 	private String address;
 	private String note;
 	
-	public Student() {
+	public SinhVien() {
 		super();
 	}
-	public Student(int num, String id, String first_name, String last_name, String dob, String id_class,
+	public SinhVien(int num, String id, String first_name, String last_name, String dob, String id_class,
 			String class_name, String number_phone, String email, String address, String note) {
 		super();
 		this.num = num;
@@ -99,7 +99,7 @@ public class Student {
 	}
 	@Override
 	public String toString() {
-		return "Student [num=" + num + ", id=" + id + ", first_name=" + first_name + ", last_name=" + last_name
+		return "SinhVien [num=" + num + ", id=" + id + ", first_name=" + first_name + ", last_name=" + last_name
 				+ ", dob=" + dob + ", id_class=" + id_class + ", class_name=" + class_name + ", number_phone="
 				+ number_phone + ", email=" + email + ", address=" + address + ", note=" + note + "]";
 	}
