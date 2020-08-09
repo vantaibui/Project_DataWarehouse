@@ -44,16 +44,18 @@ public class XLSXReader {
 
 	private static final int NUMMH = 0;
 	private static final int MAMH = 1;
-	private static final int TINCHI = 2;
-	private static final int KHOA_BMQL = 3;
-	private static final int KHOA_BMDSD = 4;
-	private static final int GHICHU = 5;
+	private static final int TENMH = 2;
+	private static final int TINCHI = 3;
+	private static final int KHOA_BMQL = 4;
+	private static final int KHOA_BMDSD = 5;
+	private static final int GHICHU = 6;
 	
 	private static final int NUMDK = 0;
 	private static final int MADK = 1;
 	private static final int MASV = 2;
 	private static final int MALHDK = 3;
 	private static final int TGDK = 4;
+
 
 //	Sinh viên
 	public List<SinhVien> readDataSV(File file) throws IOException {
@@ -300,6 +302,9 @@ public class XLSXReader {
 			break;
 		case MAMH:
 			monhoc.setMaMH(String.valueOf(value));
+			break;
+		case TENMH: 
+			monhoc.setTenMH(String.valueOf(value));
 			break;
 		case TINCHI:
 			monhoc.setTinChi(Integer.parseInt(String.valueOf(value)));

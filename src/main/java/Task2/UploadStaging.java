@@ -1,35 +1,20 @@
 package Task2;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import Constrants.Status;
-import Model.Configuration;
 import Model.ConnectDatabase;
 import Model.DangKy;
 import Model.Log;
 import Model.Lop;
 import Model.MonHoc;
-import Model.Staging;
+import Model.SendMail;
 import Reader.XLSXReader;
 import Model.SinhVien;
 
@@ -91,7 +76,7 @@ public class UploadStaging {
 	}
 
 //	import dữ liệu vào table sinhvien
-	public void loadStudent(SinhVien sinhvien) {
+	public boolean loadStudent(SinhVien sinhvien) {
 		String sql = "insert into stagingdb.sinhvien(id, first_name, last_name, dob, id_class, class_name, number_phone, email, address, note) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			pst = cdb.connectDBStaging().prepareStatement(sql);
@@ -107,14 +92,16 @@ public class UploadStaging {
 			pst.setString(10, sinhvien.getNote());
 
 			pst.executeUpdate();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return false;
 
 	}
 
 //	import dữ liệu vào table lophoc
-	public void loadLop(Lop lop) {
+	public boolean loadLop(Lop lop) {
 		String sql = "insert into stagingdb.lop(ma_lh, ma_mh, nam_hoc) values(?, ?, ?);";
 		try {
 			pst = cdb.connectDBStaging().prepareStatement(sql);
@@ -123,14 +110,16 @@ public class UploadStaging {
 			pst.setString(3, lop.getNamHoc());
 
 			pst.executeUpdate();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return false;
 
 	}
 
 //	import dữ liệu vào table dangky
-	public void loadDangKy(DangKy dangky) {
+	public boolean loadDangKy(DangKy dangky) {
 		String sql = "insert into stagingdb.dangky(ma_dk, ma_hv, ma_lh, tgdk) values(?, ?, ?, ?);";
 		try {
 			pst = cdb.connectDBStaging().prepareStatement(sql);
@@ -140,15 +129,17 @@ public class UploadStaging {
 			pst.setString(4, dangky.getTGDK());
 
 			pst.executeUpdate();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return false;
 
 	}
 
 
 //	import dữ liệu vào table monhoc
-	public void loadMonHoc(MonHoc monhoc) {
+	public boolean loadMonHoc(MonHoc monhoc) {
 		String sql = "insert into stagingdb.monhoc(ma_mh, ten_mh, tin_chi, khoa_BMQuanLi, khoa_BMDangSuDung, ghi_chu) values(?, ?, ?, ?, ?, ?)";
 		try {
 			pst = cdb.connectDBStaging().prepareStatement(sql);
@@ -160,9 +151,11 @@ public class UploadStaging {
 			pst.setString(6, monhoc.getGhiChu());
 
 			pst.executeUpdate();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return false;
 
 	}
 
@@ -170,6 +163,7 @@ public class UploadStaging {
 		UploadStaging uploadStaging = new UploadStaging();
 		XLSXReader xlsxReader = new XLSXReader();
 		log.getLog(Status.ER);
+		int countFile = 0;
 		try {
 			File file = new File("Data" + File.separator + "Student" + File.separator + log.getFile_name());
 			System.out.println(file);
@@ -181,7 +175,7 @@ public class UploadStaging {
 				System.out.println(sinhvien);
 				uploadStaging.loadStudent(sinhvien);
 			}
-			log.updateLog(Status.TR);
+			log.updateLog(Status.TR, countFile);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -192,6 +186,8 @@ public class UploadStaging {
 	public static boolean uploadStaging(Log log) throws SQLException {
 		File file;
 
+		int countFile = 0;
+		
 		UploadStaging uploadStaging = new UploadStaging();
 
 		XLSXReader xlsxReader = new XLSXReader();
@@ -202,82 +198,102 @@ public class UploadStaging {
 //		Lấy name file trong log
 		String fileName = log.getFile_name();
 		
-//		System.out.println(fileName.contains(".txt"));
+		boolean loadSuccess = false;
 
-		if (fileName.contains("sinhvien")) {
+		if (fileName.contains("s") || fileName.contains("S")) {
 			file = new File(uploadStaging.getUrlLocal(1) + File.separator + fileName);
 			
-			try {
-				List<SinhVien> dssv = xlsxReader.readDataSV(file);
-				uploadStaging.createTableInStaging("sinhvien", 1);
+			if(file.exists()) {
+				try {
+					List<SinhVien> dssv = xlsxReader.readDataSV(file);
+					uploadStaging.createTableInStaging("sinhvien", 1);
 
-				for (SinhVien sinhVien : dssv) {
-					uploadStaging.loadStudent(sinhVien);
+					for (SinhVien sinhVien : dssv) {
+						loadSuccess = uploadStaging.loadStudent(sinhVien);
+						countFile ++;
+					}
+
+				} catch (IOException e) {
+					System.out.println("Lỗi");
+					e.printStackTrace();
 				}
-				log.updateLog(Status.TR);
-				return true;
-
-			} catch (IOException e) {
-				System.out.println("Lỗi");
-				e.printStackTrace();
 			}
-
+			System.out.println("Đường dẫn không tồn tại!");
 //			Load lớp học
-		} else if (fileName.contains("lophoc")) {
+		} else if (fileName.contains("l") || fileName.contains("L")) {
 			file = new File(uploadStaging.getUrlLocal(2) + File.separator + fileName);
-
-			try {
-				List<Lop> dslop = xlsxReader.readDataLop(file);
-				uploadStaging.createTableInStaging("lop", 2);
-
-				for (Lop lop : dslop) {
-					System.out.println(lop);
-					uploadStaging.loadLop(lop);
-				}
-				log.updateLog(Status.TR);
-				return true;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
+			if(file.exists()) {
+				try {
+					List<Lop> dslop = xlsxReader.readDataLop(file);
+					uploadStaging.createTableInStaging("lop", 2);
+					
+					for (Lop lop : dslop) {
+						loadSuccess = uploadStaging.loadLop(lop);
+						countFile ++;
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}		
 			}
+			System.out.println("Đường dẫn không tồn tại!");
 
 //			Load đăng ký
-		} else if (fileName.contains("dangky")) {
+		} else if (fileName.contains("d") || fileName.contains("D")) {
 			file = new File(uploadStaging.getUrlLocal(3) + File.separator + fileName);
 			
-			try {
-				List<DangKy> dsdk = xlsxReader.readDataDK(file);
-				uploadStaging.createTableInStaging("dangky", 3);
-
-				for (DangKy dangKy : dsdk) {
-					uploadStaging.loadDangKy(dangKy);
-				}
-				log.updateLog(Status.TR);
-				return true;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(file.exists()) {
+				try {
+					List<DangKy> dsdk = xlsxReader.readDataDK(file);
+					uploadStaging.createTableInStaging("dangky", 3);
+					
+					for (DangKy dangKy : dsdk) {
+						loadSuccess = uploadStaging.loadDangKy(dangKy);
+						countFile ++;
+					}
+				} catch (IOException e) {
+					System.out.println("Lỗi");
+					e.printStackTrace();
+				}		
 			}
+			System.out.println("Đường dẫn không tồn tại!");
 
 //			Load môn học
-		} else if (fileName.contains("Monhoc")) {
+		} else if (fileName.contains("M") || fileName.contains("m")) {
 			System.out.println(fileName);
 			file = new File(uploadStaging.getUrlLocal(4) + File.separator + fileName);
 			System.out.println(file);
-//			try {
-//				List<MonHoc> dsmh = xlsxReader.readDataMH(file);
-//				uploadStaging.createTableInStaging("monhoc", 4);
-//				
-//				for (MonHoc monHoc : dsmh) {
-//					System.out.println(monHoc);
-//					uploadStaging.loadMonHoc(monHoc);
-//				}
-//			} catch (IOException e) {
-//				System.out.println("Lỗi");
-//				e.printStackTrace();
-//			}
+			if(file.exists()) {
+				try {
+					List<MonHoc> dsmh = xlsxReader.readDataMH(file);
+					uploadStaging.createTableInStaging("monhoc", 4);
+					
+					for (MonHoc monHoc : dsmh) {
+						loadSuccess = uploadStaging.loadMonHoc(monHoc);
+						countFile ++;
+					}
+				} catch (IOException e) {
+					System.out.println("Lỗi");
+					e.printStackTrace();
+				}		
+			}
+			System.out.println("Đường dẫn không tồn tại!");
 		}
-		return false;
+		else {
+			System.out.println("Không có file yêu cầu");
+		}
+		
+		if(loadSuccess == true) {
+				log.updateLog(Status.UPLOAD_STAGING, countFile);
+				SendMail.sendMail("vantaibui92@gmail.com", "Upload File To Staging", "Tải lên staging thành công.");
+				return true;				
+			
+		}
+		else {
+			log.updateLog(Status.ERROR, 0);
+			SendMail.sendMail("vantaibui92@gmail.com", "Upload File To Staging", "Tải file thất bại.");
+			return false;
+		}
 	}
 
 	public static void main(String[] args) throws SQLException, IOException {

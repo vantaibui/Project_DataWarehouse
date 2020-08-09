@@ -16,13 +16,12 @@ public class Log {
 
 	private int data_file_id;
 	private String file_name;
-	private String server_name;
 	private int data_file_config_id;
 	private String file_status;
 	private int staging_load_count;
 	private String time_stamp_download;
 	private long time_stamp_insert_staging;
-
+//swra doi tuong lai
 //	data_file_id, file_name, server_name, data_file_config_id, file_status, staging_load_count, time_stap_download, time_stap_insert_staging
 
 	PreparedStatement pst = null;
@@ -40,11 +39,10 @@ public class Log {
 		cdc = new ConnectDatabase();
 	}
 
-	public Log(String file_name, String server_name, int data_file_config_id, String file_status,
+	public Log(String file_name, int data_file_config_id, String file_status,
 			int staging_load_count, String time_stamp_download, long time_stamp_insert_staging) {
 		super();
 		this.file_name = file_name;
-		this.server_name = server_name;
 		this.data_file_config_id = data_file_config_id;
 		this.file_status = file_status;
 		this.staging_load_count = staging_load_count;
@@ -59,15 +57,6 @@ public class Log {
 	public void setFile_name(String file_name) {
 		this.file_name = file_name;
 	}
-
-	public String getServer_name() {
-		return server_name;
-	}
-
-	public void setServer_name(String server_name) {
-		this.server_name = server_name;
-	}
-
 	public int getData_file_config_id() {
 		return data_file_config_id;
 	}
@@ -130,7 +119,7 @@ public class Log {
 
 		for (int i = 0; i < listFile.length; i++) {
 			File file = listFile[i];
-			Log log = new Log(file.getName(), file.getName().substring(file.getName().lastIndexOf(".")), (i + 1), "ER",
+			Log log = new Log(file.getName(), (i + 1), "ER",
 					0, timestamp, 0);
 			listLog.add(log);
 		}
@@ -138,17 +127,16 @@ public class Log {
 	}
 
 	public void insertLog(Log log) {
-		sql = "insert into `log` (file_name, server_name, data_file_config_id, file_status, staging_load_count, time_stamp_download, time_stamp_insert_staging) "
-				+ "values (?,?,?,?,?,?,?)";
+		sql = "insert into `log` (file_name, data_file_config_id, file_status, staging_load_count, time_stamp_download, time_stamp_insert_staging) "
+				+ "values (?,?,?,?,?,?)";
 		try {
 			pst = cdc.connectDBControl().prepareStatement(sql);
 			pst.setString(1, log.getFile_name());
-			pst.setString(2, log.getServer_name());
-			pst.setInt(3, log.getData_file_config_id());
-			pst.setString(4, log.getFile_status());
-			pst.setInt(5, log.getStaging_load_count());
-			pst.setString(6, log.getTime_stamp_download());
-			pst.setLong(7, log.getTime_stamp_insert_staging());
+			pst.setInt(2, log.getData_file_config_id());
+			pst.setString(3, log.getFile_status());
+			pst.setInt(4, log.getStaging_load_count());
+			pst.setString(5, log.getTime_stamp_download());
+			pst.setLong(6, log.getTime_stamp_insert_staging());
 			pst.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -167,7 +155,6 @@ public class Log {
 				this.setTime_stamp_insert_staging(rs.getLong("time_stamp_insert_staging"));
 				this.setTime_stamp_download(rs.getString("time_stamp_download"));
 				this.setStaging_load_count(rs.getInt("staging_load_count"));
-				this.setServer_name(rs.getString("server_name"));
 				this.setFile_status(rs.getString("file_status"));
 				this.setFile_name(rs.getString("file_name"));
 			}
@@ -184,12 +171,13 @@ public class Log {
 
 	}
 
-	public void updateLog(Status new_status) {
-		sql = "UPDATE controldb.log SET file_status = ? WHERE data_file_id = ?";
+	public void updateLog(Status new_status, int staging_load_count) {
+		sql = "UPDATE controldb.log SET file_status = ?,staging_load_count = ? WHERE data_file_id = ?";
 		try {
 			pst = cdc.connectDBControl().prepareStatement(sql);
 			pst.setString(1, new_status.name());
-			pst.setInt(2, this.getData_file_id());
+			pst.setInt(2, staging_load_count);
+			pst.setInt(3, this.getData_file_id());
 			pst.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
