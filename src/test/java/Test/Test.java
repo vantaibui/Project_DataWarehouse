@@ -15,7 +15,7 @@ public class Test {
 //		
 //		String sinhVien = "sinhvien";
 //		UploadStaging.loadToStaging(log, sinhVien, 1);
-		
+		//oong taoj ban connection ha ong
 		UploadStaging.uploadStaging(log);
 
 	}
