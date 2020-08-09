@@ -12,14 +12,13 @@ public class SinhVien {
 	private String email;
 	private String address;
 	private String note;
+	private int sk_date;
 	
-	public SinhVien() {
+	
+	
+	public SinhVien(String id, String first_name, String last_name, String dob, String id_class, String class_name,
+			String number_phone, String email, String address, String note, int sk_date) {
 		super();
-	}
-	public SinhVien(int num, String id, String first_name, String last_name, String dob, String id_class,
-			String class_name, String number_phone, String email, String address, String note) {
-		super();
-		this.num = num;
 		this.id = id;
 		this.first_name = first_name;
 		this.last_name = last_name;
@@ -30,6 +29,7 @@ public class SinhVien {
 		this.email = email;
 		this.address = address;
 		this.note = note;
+		this.sk_date = sk_date;
 	}
 	public int getNum() {
 		return num;
@@ -96,6 +96,13 @@ public class SinhVien {
 	}
 	public void setNote(String note) {
 		this.note = note;
+	}
+	
+	public int getSk_date() {
+		return sk_date;
+	}
+	public void setSk_date(int sk_date) {
+		this.sk_date = sk_date;
 	}
 	@Override
 	public String toString() {

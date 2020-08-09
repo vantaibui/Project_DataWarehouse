@@ -13,10 +13,9 @@ public class MonHoc {
 		super();
 	}
 
-	public MonHoc(int num, String maMH, String tenMH, int tinChi, String khoa_BMQuanLi, String khoa_BMDangSuDung,
+	public MonHoc( String maMH, String tenMH, int tinChi, String khoa_BMQuanLi, String khoa_BMDangSuDung,
 			String ghiChu) {
 		super();
-		this.num = num;
 		this.maMH = maMH;
 		this.tenMH = tenMH;
 		this.tinChi = tinChi;

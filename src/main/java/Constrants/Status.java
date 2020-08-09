@@ -1,5 +1,5 @@
 package Constrants;
 
 public enum Status {
-	ER, TR
+	ER, TR,SU
 }

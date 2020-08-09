@@ -1,7 +1,6 @@
 package Model;
 
 public class DangKy {
-	private int num;
 	private String maDK;
 	private String maSV;
 	private String maLH;
@@ -11,22 +10,15 @@ public class DangKy {
 		super();
 	}
 
-	public DangKy(int num, String maDK, String maSV, String maLH, String tGDK) {
+	public DangKy(String maDK, String maSV, String maLH, String tGDK) {
 		super();
-		this.num = num;
 		this.maDK = maDK;
 		this.maSV = maSV;
 		this.maLH = maLH;
 		TGDK = tGDK;
 	}
 
-	public int getNum() {
-		return num;
-	}
-
-	public void setNum(int num) {
-		this.num = num;
-	}
+	
 
 	public String getMaDK() {
 		return maDK;

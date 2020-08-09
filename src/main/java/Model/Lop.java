@@ -10,9 +10,8 @@ public class Lop {
 		super();
 	}
 
-	public Lop(int num, String maLH, String maMH, String namHoc) {
+	public Lop(String maLH, String maMH, String namHoc) {
 		super();
-		this.num = num;
 		this.maLH = maLH;
 		this.maMH = maMH;
 		this.namHoc = namHoc;

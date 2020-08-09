@@ -42,7 +42,7 @@ public class UploadStaging {
 		cdb = new ConnectDatabase();
 	}
 
-//	Lấy url local trong configuration với config_id tương ứng
+//	Láº¥y url local trong configuration vá»›i config_id tÆ°Æ¡ng á»©ng
 	public String getUrlLocal(int config_id) throws SQLException {
 		String result = "";
 		Connection connection = cdb.connectDBControl();
@@ -56,7 +56,7 @@ public class UploadStaging {
 		return result;
 	}
 
-//	Lấy column_list và variable_list trong configuration với config_id tương ứng
+//	Láº¥y column_list vÃ  variable_list trong configuration vá»›i config_id tÆ°Æ¡ng á»©ng
 	public String getColumnList(int config_id) throws SQLException {
 		String result = "";
 		Connection connection = cdb.connectDBControl();
@@ -74,7 +74,7 @@ public class UploadStaging {
 		return result;
 	}
 
-//	Tạo table trong stagingdb
+//	Táº¡o table trong stagingdb
 	public void createTableInStaging(String tableName, int config_id) throws SQLException {
 		String result = "";
 		StringBuilder stringBuilder = new StringBuilder();
@@ -90,9 +90,9 @@ public class UploadStaging {
 		preparedStatement.executeUpdate();
 	}
 
-//	import dữ liệu vào table sinhvien
+//	import dá»¯ liá»‡u vÃ o table sinhvien
 	public void loadStudent(SinhVien sinhvien) {
-		String sql = "insert into stagingdb.sinhvien(id, first_name, last_name, dob, id_class, class_name, number_phone, email, address, note) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "insert into stagingdb.sinhvien(id_student, first_name, last_name, dob, id_class, class_name, number_phone, email, address, note) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			pst = cdb.connectDBStaging().prepareStatement(sql);
 			pst.setString(1, sinhvien.getId());
@@ -113,7 +113,7 @@ public class UploadStaging {
 
 	}
 
-//	import dữ liệu vào table lophoc
+//	import dá»¯ liá»‡u vÃ o table lophoc
 	public void loadLop(Lop lop) {
 		String sql = "insert into stagingdb.lop(ma_lh, ma_mh, nam_hoc) values(?, ?, ?);";
 		try {
@@ -129,7 +129,7 @@ public class UploadStaging {
 
 	}
 
-//	import dữ liệu vào table dangky
+//	import dá»¯ liá»‡u vÃ o table dangky
 	public void loadDangKy(DangKy dangky) {
 		String sql = "insert into stagingdb.dangky(ma_dk, ma_hv, ma_lh, tgdk) values(?, ?, ?, ?);";
 		try {
@@ -147,7 +147,7 @@ public class UploadStaging {
 	}
 
 
-//	import dữ liệu vào table monhoc
+//	import dá»¯ liá»‡u vÃ o table monhoc
 	public void loadMonHoc(MonHoc monhoc) {
 		String sql = "insert into stagingdb.monhoc(ma_mh, ten_mh, tin_chi, khoa_BMQuanLi, khoa_BMDangSuDung, ghi_chu) values(?, ?, ?, ?, ?, ?)";
 		try {
@@ -196,10 +196,10 @@ public class UploadStaging {
 
 		XLSXReader xlsxReader = new XLSXReader();
 
-//		Lấy status của file trong log
+//		Láº¥y status cá»§a file trong log
 		log.getLog(Status.ER);
 
-//		Lấy name file trong log
+//		Láº¥y name file trong log
 		String fileName = log.getFile_name();
 		
 //		System.out.println(fileName.contains(".txt"));
@@ -218,11 +218,11 @@ public class UploadStaging {
 				return true;
 
 			} catch (IOException e) {
-				System.out.println("Lỗi");
+				System.out.println("Lá»—i");
 				e.printStackTrace();
 			}
 
-//			Load lớp học
+//			Load lá»›p há»�c
 		} else if (fileName.contains("lophoc")) {
 			file = new File(uploadStaging.getUrlLocal(2) + File.separator + fileName);
 
@@ -241,7 +241,7 @@ public class UploadStaging {
 				e.printStackTrace();
 			}
 
-//			Load đăng ký
+//			Load Ä‘Äƒng kÃ½
 		} else if (fileName.contains("dangky")) {
 			file = new File(uploadStaging.getUrlLocal(3) + File.separator + fileName);
 			
@@ -259,7 +259,7 @@ public class UploadStaging {
 				e.printStackTrace();
 			}
 
-//			Load môn học
+//			Load mÃ´n há»�c
 		} else if (fileName.contains("Monhoc")) {
 			System.out.println(fileName);
 			file = new File(uploadStaging.getUrlLocal(4) + File.separator + fileName);
@@ -273,7 +273,7 @@ public class UploadStaging {
 //					uploadStaging.loadMonHoc(monHoc);
 //				}
 //			} catch (IOException e) {
-//				System.out.println("Lỗi");
+//				System.out.println("Lá»—i");
 //				e.printStackTrace();
 //			}
 		}
