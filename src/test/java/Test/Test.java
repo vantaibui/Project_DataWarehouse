@@ -15,7 +15,7 @@ public class Test {
 //		
 //		String sinhVien = "sinhvien";
 //		UploadStaging.loadToStaging(log, sinhVien, 1);
-		
+		// test thoi
 		UploadStaging.uploadStaging(log);
 
 	}
