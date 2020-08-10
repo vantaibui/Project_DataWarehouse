@@ -45,7 +45,7 @@ public class ConnectDatabase {
 	public Connection connectDBControl() throws SQLException {
 		String result;
 
-		result = readFileFromFolder("src/main/java/Configuration/DataConfig.txt");
+		result = readFileFromFolder("G:\\CodeJava\\DataWarehouse2020\\DW\\src\\main\\java\\Configuration\\DataConfig.txt");
 		String[] connectInfo = result.split("\n");
 		String driver = connectInfo[0];
 		String url = connectInfo[1];
@@ -54,9 +54,7 @@ public class ConnectDatabase {
 		String password = connectInfo[4];
 		connection = jdbcConnectionDB.getJDBConnection(driver, url, db, user, password);
 		if (connection != null) {
-			System.out.println("Kết nối thành công");
 		} else {
-			System.out.println("Kết nối thất bại");
 		}
 		return connection;
 
@@ -88,7 +86,6 @@ public class ConnectDatabase {
 		ConnectInfo connectInfo = getConnectionDataConfig().get(1);
 		connection = jdbcConnectionDB.getJDBConnection(connectInfo.getDriver(), connectInfo.getUrl(),
 				connectInfo.getDb(), connectInfo.getUser(), connectInfo.getPassword());
-		System.out.println(connectInfo.getDb());
 		return connection;
 	}
 
@@ -96,7 +93,6 @@ public class ConnectDatabase {
 		ConnectInfo connectInfo = getConnectionDataConfig().get(0);
 		connection = jdbcConnectionDB.getJDBConnection(connectInfo.getDriver(), connectInfo.getUrl(),
 				connectInfo.getDb(), connectInfo.getUser(), connectInfo.getPassword());
-		System.out.println(connectInfo.getDb());
 		return connection;
 	}
 

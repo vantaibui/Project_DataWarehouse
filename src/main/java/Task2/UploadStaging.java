@@ -304,7 +304,8 @@ public class UploadStaging {
 //		}
 		Log log = new Log();
 		String sinhvien = "sinhvien";
-		uploadStaging.uploadStaging(log);
+//		uploadStaging.uploadStaging(log);
+//		uploadStaging.createTableInStaging("sinhvien", 1);
 //		uploadStaging.createTableInStaging("dangky", 3);
 //		System.out.println(uploadStaging.loadToStaging(log, "sinhvien", 1));
 	}

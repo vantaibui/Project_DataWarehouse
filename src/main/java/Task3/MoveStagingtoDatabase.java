@@ -399,8 +399,8 @@ public class MoveStagingtoDatabase {
 					PreparedStatement preparedStatement = connection.prepareStatement(create);
 					preparedStatement.executeUpdate();
 				  for(SinhVien st:listStudent) {
-					  String sql2= "insert into datawarehouse.studentwh(id_student,first_name,last_name,dob,id_class,class_name,number_phone,email,address,note,sk_date) values(?,?,?,?,?,?,?,?,?,?,?) ";
-					  String sql3="update datawarehouse.studentwh set first_name=?,last_name=?,dob=?,id_class=?,class_name=?,number_phone=?,email=?,address=?,note=?,sk_date=? where id_student=?";
+					  String sql2= "insert into datawarehouse.studentwh(id_student,first_name,last_name,dob,id_class,class_name,number_phone,email,address,note) values(?,?,?,?,?,?,?,?,?,?,?) ";
+					  String sql3="update datawarehouse.studentwh set first_name=?,last_name=?,dob=?,id_class=?,class_name=?,number_phone=?,email=?,address=?,note=?where id_student=?";
 					 String sql4="delete from stagingdb.sinhvien where id= "+st.getId();
 					  try {
 						  
@@ -415,8 +415,8 @@ public class MoveStagingtoDatabase {
 								pst.setString(7,st.getEmail());
 								pst.setString(8,st.getAddress());
 								pst.setString(9,st.getNote());
-								pst.setInt(10,InsertDate(st.getDob()));
-								pst.setString(11, st.getId());
+								//pst.setInt(10,InsertDate(st.getDob()));
+								pst.setString(10, st.getId());
 								pst.executeUpdate();
 								System.out.println("Record "+st.getId()+" đã tồn tại đã update");
 						  }else {
@@ -431,7 +431,7 @@ public class MoveStagingtoDatabase {
 								pst.setString(8,st.getEmail());
 								pst.setString(9,st.getAddress());
 								pst.setString(10,st.getNote());
-								pst.setInt(11, InsertDate(st.getDob()));
+								//pst.setInt(11, InsertDate(st.getDob()));
 						pst.executeUpdate();
 						}} catch (SQLException e) {
 							// TODO Auto-generated catch block

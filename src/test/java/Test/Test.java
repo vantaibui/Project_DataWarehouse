@@ -25,8 +25,9 @@ public class Test {
 		System.out.println("4. Config Subject");
 		System.out.print("Nhập Config muốn tải");
 		
-		Scanner sc = new Scanner(System.in);
-		int key = sc.nextInt();
+//		Scanner sc = new Scanner(System.in);
+//		int key = sc.nextInt();
+		int key = Integer.parseInt(args[0]);
 		switch (key) {
 		case 1:
 			down.local_path = "G:\\CodeJava\\DataWarehouse2020\\DW\\Data\\Student";
@@ -36,21 +37,21 @@ public class Test {
 			log.updateLogDW(Status.SU, log);
 			break;
 		case 2:
-			local_path = "G:\\CodeJava\\DataWarehouse2020\\DW\\Data\\Class";
+			down.local_path = "G:\\CodeJava\\DataWarehouse2020\\DW\\Data\\Class";
 			down.insertDataLog1(key);
 			uploadStaging.uploadStaging(log);
 			moveStagingtoDatabase.BuiltDataLopHoc();
 			log.updateLogDW(Status.SU, log);
 			break;
 		case 3:
-			local_path = "G:\\CodeJava\\DataWarehouse2020\\DW\\Data\\Register";
+			down.local_path = "G:\\CodeJava\\DataWarehouse2020\\DW\\Data\\Register";
 			down.insertDataLog1(key);
 			uploadStaging.uploadStaging(log);
 			moveStagingtoDatabase.BuiltDataDangKi();
 			log.updateLogDW(Status.SU, log);
 			break;
 		case 4:
-			local_path = "G:\\CodeJava\\DataWarehouse2020\\DW\\Data\\Subject";
+			down.local_path = "G:\\CodeJava\\DataWarehouse2020\\DW\\Data\\Subject";
 			down.insertDataLog1(key);
 			uploadStaging.uploadStaging(log);
 			moveStagingtoDatabase.BuiltDataMonHoc();
