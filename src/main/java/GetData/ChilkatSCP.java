@@ -15,9 +15,11 @@ import com.chilkatsoft.CkGlobal;
 import com.chilkatsoft.CkScp;
 import com.chilkatsoft.CkSsh;
 
+import Constrants.Status;
 import Model.Configuration;
 import Model.ConnectDatabase;
 import Model.GetConnection;
+import Model.Log;
 import Model.SendMail;
 
 public class ChilkatSCP {
@@ -31,16 +33,16 @@ public class ChilkatSCP {
 	String timestamp = dtf.format(now);
 	static final String NUMBER_REGEX = "^[0-9]+$";
 	String server_path;
-	String local_path;
+	public String local_path = "";
 	private String sqlCheck;
 	private PreparedStatement pstCheck = null;
 	private String sqlUpdate;
 	private PreparedStatement pstUpdate = null;
 	private ResultSet rsCheck;
-	//1. tải thư viện chilkat
+	// 1. tải thư viện chilkat
 	static {
 		try {
-			System.loadLibrary("chilkat"); 
+			System.loadLibrary("chilkat");
 		} catch (UnsatisfiedLinkError e) {
 			System.err.println("Native code library failed to load.\n" + e);
 			System.exit(1);
@@ -71,7 +73,8 @@ public class ChilkatSCP {
 		}
 		return list;
 	}
-	//3. chilkatSCPDownload(Configuration config) download đối tượng config
+
+	// 3. chilkatSCPDownload(Configuration config) download đối tượng config
 	public boolean chilkatSCPDownLoad(Configuration config) {
 		CkSsh ssh = new CkSsh();
 		CkGlobal ck = new CkGlobal();
@@ -101,7 +104,7 @@ public class ChilkatSCP {
 			sm.sendMail("17130135@st.hcmuaf.edu.vn", "DATA WAREHOUSE", "Không có kết nối!...");
 			return false;
 		}
-		//3.4. tải những file nào và không tải những file nào đã ghi xuống log
+		// 3.4. tải những file nào và không tải những file nào đã ghi xuống log
 		scp.put_SyncMustMatch(config.getFile_name());
 		scp.put_SyncMustNotMatch(config.getNot_file_name());
 		success = scp.SyncTreeDownload(config.getServer_dir(), config.getImport_dir(), config.getMode_scp(), false);
@@ -117,8 +120,10 @@ public class ChilkatSCP {
 		ssh.Disconnect();
 		return true;
 	}
-	//2. isDownLoadSCPChilkat(int id) lấy dữ liệu từ database tạo đối tượng.
-	//gọi lại phương thức chilkatSCPDownload(Configuration config)để tiến hành download
+
+	// 2. isDownLoadSCPChilkat(int id) lấy dữ liệu từ database tạo đối tượng.
+	// gọi lại phương thức chilkatSCPDownload(Configuration config)để tiến hành
+	// download
 	public boolean isDownLoadSCPChilkat(int id) {
 		boolean result = false;
 		sql = "SELECT * FROM configuration where config_id = '" + id + "'";
@@ -137,7 +142,7 @@ public class ChilkatSCP {
 				server_path = rs.getString("server_dir");
 				local_path = rs.getString("import_dir");
 				int mode_scp = rs.getInt("mode_scp");
-				//get file name của config
+				// get file name của config
 				String sync_not_must_math = sync_not_mustMath(id);
 
 				Configuration scp_config = new Configuration(id_scp, load_library, host_name_scp, port_scp,
@@ -163,7 +168,9 @@ public class ChilkatSCP {
 		}
 		return result;
 	}
-	//phương thức sync_not_mustMath(int id) lấy dữ liệu từ database tạo thành chuỗi làm công việc không tải những file này
+
+	// phương thức sync_not_mustMath(int id) lấy dữ liệu từ database tạo thành chuỗi
+	// làm công việc không tải những file này
 	public String sync_not_mustMath(int id) {
 		String sql = "SELECT file_name FROM log WHERE data_file_config_id=" + id;
 		String result = "";
@@ -188,16 +195,18 @@ public class ChilkatSCP {
 		}
 		return result;
 	}
-	//4. phương thức insertDatalog(int id) dùng để kiểm tra đã tải thành công hay chưa. Nếu thành công thì
-	//insert log những file đã tải.
+
+	// 4. phương thức insertDatalog(int id) dùng để kiểm tra đã tải thành công hay
+	// chưa. Nếu thành công thì
+	// insert log những file đã tải.
 	public boolean insertDataLog(int id) {
 		int rs = 0;
 		boolean check = false;
 		if (!isDownLoadSCPChilkat(id)) {
 			return check;
 		} else {
-			sql = "INSERT INTO log (file_name,kB,data_file_config_id,file_status, time_stap_download,staging_load_count, time_stap_insert_staging, timestamp_insert_datawarehouse)"
-					+ " values (?,?,?,?,?,?,?,?)";
+			sql = "INSERT INTO log (file_name,data_file_config_id,file_status, time_stamp_download)"
+					+ " values (?,?,?,?)";
 			File localPath = new File(local_path);
 			File[] listFileLog = localPath.listFiles();
 
@@ -229,14 +238,10 @@ public class ChilkatSCP {
 					pst = new GetConnection().getConnection("controldb").prepareStatement(sql);
 					pst.setString(1, listFileLog[i].getName());
 					System.out.println(listFileLog[i].getName());
-					pst.setLong(2, listFileLog[i].length());
-					pst.setInt(3, id);
-					pst.setString(4, "ER");
-					pst.setString(5, timestamp);
-					pst.setInt(6, 0);
-					pst.setString(7, null);
-					pst.setString(8, null);
-					rs = pst.executeUpdate();
+					pst.setInt(2, id);
+					pst.setString(3, "ER");
+					pst.setString(4, timestamp);
+					pst.executeUpdate();
 					check = true;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -257,7 +262,64 @@ public class ChilkatSCP {
 		return check;
 
 	}
-	//5. phương thức sendMailInsertLog(int id) dùng để kiểm tra xem ghi log thành công hay chưa. Nếu
+
+	public boolean insertDataLog1(int id) {
+		int rs = 0;
+		sql = "INSERT INTO log (file_name,data_file_config_id,file_status, time_stamp_download)" + " values (?,?,?,?)";
+		File localPath = new File(local_path);
+		File[] listFileLog = localPath.listFiles();
+
+		lable: for (int i = 0; i < listFileLog.length; i++) {
+			String sqlCheck = "select * from log";
+			try {
+				pstCheck = new GetConnection().getConnection("controldb").prepareStatement(sqlCheck);
+				rsCheck = pstCheck.executeQuery();
+				while (rsCheck.next()) {
+					if (rsCheck.getString(2).equals(listFileLog[i].getName())
+							&& rsCheck.getLong(3) == listFileLog[i].length()) {
+						continue lable;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (pstCheck != null)
+						pstCheck.close();
+					if (this.rsCheck != null)
+						this.rsCheck.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				pst = new GetConnection().getConnection("controldb").prepareStatement(sql);
+				pst.setString(1, listFileLog[i].getName());
+				System.out.println(listFileLog[i].getName());
+				pst.setInt(2, id);
+				pst.setString(3, "ER");
+				pst.setString(4, timestamp);
+				pst.executeUpdate();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (pst != null)
+						pst.close();
+					if (this.rs != null)
+						this.rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return false;
+
+	}
+
+	// 5. phương thức sendMailInsertLog(int id) dùng để kiểm tra xem ghi log thành
+	// công hay chưa. Nếu
 	// thành công thì gửi mail thành công còn không thì gửi mail báo thất bại.
 	public void sendMailInsertLog(int id) {
 		if (insertDataLog(id) == true) {
@@ -272,8 +334,30 @@ public class ChilkatSCP {
 		}
 	}
 
+	public List<Log> getLog(Status status) {
+		String result = "";
+		List<Log> listLog = new ArrayList<Log>();
+		sql = "SELECT * FROM controldb.log WHERE file_status = ?";
+		try {
+			pst = new GetConnection().getConnection("controldb").prepareStatement(sql);
+			pst.setString(1, status.name());
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				listLog.add(new Log(rs.getString("file_name"), rs.getInt("data_file_config_id"),
+						rs.getString("file_status"), rs.getInt("staging_load_count"),
+						rs.getString("time_stamp_download"), rs.getLong("time_stamp_insert_staging")));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(listLog.toString());
+		return listLog;
+	}
+
 	public static void main(String[] args) throws SQLException {
 		ChilkatSCP test = new ChilkatSCP();
-		test.sendMailInsertLog(1);
+//		test.sendMailInsertLog(1);
+
+		test.getLog(Status.ER);
 	}
 }

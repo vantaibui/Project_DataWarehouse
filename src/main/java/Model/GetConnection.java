@@ -18,7 +18,7 @@ public class GetConnection {
 	String databasebName = null;
 
 	public Connection getConnection(String location_dbName) {
-		String pathLinkProperties = "D:\\Project_DataWarehouse\\src\\main\\java\\Configuration\\DataConfig.properties";
+		String pathLinkProperties = "G:\\CodeJava\\DataWarehouse2020\\DW\\src\\main\\java\\Configuration\\DataConfig.properties";
 		Connection conn = null;
 		if (location_dbName.equalsIgnoreCase("controldb")) {
 			try {

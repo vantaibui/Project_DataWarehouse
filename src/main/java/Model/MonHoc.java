@@ -25,6 +25,17 @@ public class MonHoc {
 		this.ghiChu = ghiChu;
 	}
 
+	public MonHoc( String maMH, String tenMH, int tinChi, String khoa_BMQuanLi, String khoa_BMDangSuDung,
+			String ghiChu) {
+		super();
+		this.maMH = maMH;
+		this.tenMH = tenMH;
+		this.tinChi = tinChi;
+		this.khoa_BMQuanLi = khoa_BMQuanLi;
+		this.khoa_BMDangSuDung = khoa_BMDangSuDung;
+		this.ghiChu = ghiChu;
+	}
+
 	public int getNum() {
 		return num;
 	}

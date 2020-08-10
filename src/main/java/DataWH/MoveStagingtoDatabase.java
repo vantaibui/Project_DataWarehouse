@@ -1,4 +1,4 @@
-package Task3;
+package DataWH;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.ss.examples.formula.CheckFunctionsSupported;
 
 import Constrants.Status;
 import Model.ConnectDatabase;
@@ -34,6 +35,7 @@ public class MoveStagingtoDatabase {
 	public MoveStagingtoDatabase() {
 		cdb= new ConnectDatabase();
 	}
+	
 	public static void loadWH(int table) throws Exception {
 		 String sql= "select * controldb.log where data_file_id= "+table+"file_status='TR'";
 		 int config_id = 0;
@@ -77,7 +79,7 @@ public class MoveStagingtoDatabase {
 			 UpdateTimeLogInsertStaging(table);
 			 UpdateStatus(table, Status.SU);
 			 
-		 }else if(table_taget=="lopwh") {
+		 }else if(table_taget=="lophocwh") {
 			 BuiltDataLopHoc();
 			 UpdateTimeLogInsertStaging(table);
 			 UpdateStatus(table, Status.SU);
@@ -111,8 +113,8 @@ public class MoveStagingtoDatabase {
 			 
 		 }
 	 // check trung dk
-	 public static boolean checkforexistenceDK(String ma_dk) {
-			String sql="SELECT count(MaDK) FROM datawarehouse.dangkiwh Where MaDK = ?";
+	 public static boolean checkforexistenceDK(String ma_dk) {//Data data
+			String sql="SELECT count(MaDK) FROM datawarehouse.dangkiwh Where MaDK = ?";//datawarehouse.Student
 			 
 				try {
 					PreparedStatement pst1;
@@ -182,7 +184,6 @@ public class MoveStagingtoDatabase {
 		  }
 		  ///load mon hoc
 		  public static void BuiltDataMonHoc() throws SQLException{
-			  int num;
 			  String MaMH;
 			  String TenMH="";
 			  int tinchi;
@@ -191,28 +192,21 @@ public class MoveStagingtoDatabase {
 			  String ghichu;
 				  List<MonHoc> listMH= new ArrayList<MonHoc>();
 				  String sql1= "select * from stagingdb.monhoc";
-				  String sqldel="";
 				  pst=cdb.connectDBStaging().prepareStatement(sql1);
 				  ResultSet rs1= pst.executeQuery();
 				  while(rs1.next()) {
-					  num=rs1.getInt("num");
-				  MaMH=rs1.getString("ma_mh");
-				  TenMH=rs1.getString("ten_mh");
-				  tinchi= rs1.getInt("tin_Chi");
-				  Khoa=rs1.getString("khoa_BMQuanLi");
-				  KhoaSD= rs1.getString("khoa_BMDangSuDung");
-				  ghichu= rs1.getString("ghi_chu");
-				  listMH.add(new MonHoc(num,MaMH, TenMH, tinchi, Khoa, KhoaSD, ghichu));
-				 
+				  MaMH=rs1.getString("maMH");
+				  TenMH=rs1.getString("tenMH");
+				  tinchi= rs1.getInt("tinChi");
+				  Khoa=rs1.getString("Khoa_BMQuanLi");
+				  KhoaSD= rs1.getString("Khoa_BMDangSuDung");
+				  ghichu= rs1.getString("ghiChu");
+				  listMH.add(new MonHoc(MaMH, TenMH, tinchi, Khoa, KhoaSD, ghichu));
+				  
 			  }
-			String monhoc="create table if not exists datawarehouse.monhocwh(num int(50) Not null AUTO_INCREMENT primary key ,maMH varchar(255),tenMH varchar(255),tinChi varchar(255),Khoa_BMQuanLi varchar(255),Khoa_BMDangSuDung varchar(255),ghiChu varchar(255))";
-			Connection connection = cdb.connectDBWarehouse();
-			PreparedStatement preparedStatement = connection.prepareStatement(monhoc);
-			preparedStatement.executeUpdate();
-		
 				  for(MonHoc MH:listMH) {
 					  String sql2= "insert into datawarehouse.monhocwh(maMH, tenMH,tinChi,Khoa_BMQuanLi,Khoa_BMDangSuDung,ghiChu) values(?,?,?,?,?,?) ";
-					  String sql3= "delete from stagingdb.monhoc where num="+MH.getNum();
+					  
 					 
 					  try {
 						  pst= cdb.connectDBWarehouse().prepareStatement(sql2);
@@ -225,18 +219,7 @@ public class MoveStagingtoDatabase {
 								pst.setString(6, MH.getGhiChu());
 						pst.executeUpdate();
 						} catch (SQLException e) {
-							e.printStackTrace();
-						}finally {
-				            if (pst != null) pst.close();
-				            if (rs != null) rs.close();
-				        }
-					  
-					  //xoa
-					  try {
-						  System.out.println("da xoa "+ MH.getMaMH());
-						  pst= cdb.connectDBStaging().prepareStatement(sql3);
-						pst.executeUpdate();
-						} catch (SQLException e) {
+							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}finally {
 				            if (pst != null) pst.close();
@@ -246,8 +229,7 @@ public class MoveStagingtoDatabase {
 				  }  
 		  
 		  // load dang ky
-		  public static void BuiltDataDangKi() throws SQLException{	
-			  	int num;
+		  public static void BuiltDataDangKi() throws SQLException{			  
 				String ma_dk="";
 				String ma_hv="";
 				String ma_lh="";
@@ -257,21 +239,18 @@ public class MoveStagingtoDatabase {
 				  pst=cdb.connectDBStaging().prepareStatement(sql1);
 				  ResultSet rs1= pst.executeQuery();
 				  while(rs1.next()) {
-					  num= rs1.getInt("num");
 					  ma_dk=rs1.getString("ma_dk");
 					  ma_hv=rs1.getString("ma_hv");
 					  ma_lh=rs1.getString("ma_lh");
 					  tgdk=rs1.getString("tgdk");
-				  listDK.add(new DangKy(num,ma_dk, ma_hv, ma_lh, tgdk));
+				  listDK.add(new DangKy(ma_dk, ma_hv, ma_lh, tgdk));
 				  
 			  }
-				  String dangky="create table if not exists datawarehouse.dangkywh(num int(50) Not null AUTO_INCREMENT primary key ,ma_dk varchar(255),ma_hv varchar(255),ma_lh varchar(255),tgdk varchar(255))";
-				  Connection connection = cdb.connectDBWarehouse();
-					PreparedStatement preparedStatement = connection.prepareStatement(dangky);
-					preparedStatement.executeUpdate();
+				  
 				  for(DangKy dk:listDK) {
 					  String sql2= "insert into datawarehouse.dangkywh(ma_dk,ma_hv,ma_lh,tgdk) values(?,?,?,?) ";
-					  String sql3= "delete from stagingdb.dangky where num="+dk.getNum();
+					  
+					 
 					  try {
 						  pst= cdb.connectDBWarehouse().prepareStatement(sql2);
 						 
@@ -286,25 +265,13 @@ public class MoveStagingtoDatabase {
 				            if (pst != null) pst.close();
 				            if (rs != null) rs.close();
 				        }
-					  
-					  //xoa
-					  try {
-						  System.out.println("da xoa "+ dk.getMaDK());
-						  pst= cdb.connectDBStaging().prepareStatement(sql3);
-						pst.executeUpdate();
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}finally {
-				            if (pst != null) pst.close();
-				            if (rs != null) rs.close();
-						}
 					  }
 				  }  
 		  
 		  
 		  //load lop hoc
 		  public static void BuiltDataLopHoc() throws SQLException{
-			  int num;
+			  
 			  String MaLH;
 				String MaMH;
 				String namhoc;
@@ -313,20 +280,15 @@ public class MoveStagingtoDatabase {
 				  pst=cdb.connectDBStaging().prepareStatement(sql1);
 				  ResultSet rs1= pst.executeQuery();
 				  while(rs1.next()) {
-					  num=rs1.getInt("num");
 					  MaLH=rs1.getString("ma_lh");
 					  MaMH=rs1.getString("ma_mh");
 					  namhoc=rs1.getString("nam_hoc");
-				  listLH.add(new Lop(num,MaLH, MaMH, namhoc));
+				  listLH.add(new Lop(MaLH, MaMH, namhoc));
 				 
 			  }
-				  String lop="create table if not exists datawarehouse.lopwh(num int(50) Not null AUTO_INCREMENT primary key,ma_lh varchar(255),ma_mh varchar(255),nam_hoc varchar(255))";
-				  Connection connection = cdb.connectDBWarehouse();
-					PreparedStatement preparedStatement = connection.prepareStatement(lop);
-					preparedStatement.executeUpdate();
 				  for(Lop LH:listLH) {
 					  String sql2= "insert into datawarehouse.lopwh(ma_lh, ma_mh, nam_hoc) values(?, ?, ?)";
-					  String sql3= "delete from stagingdb.lop where num="+LH.getNum();
+					  
 					 
 					  try {
 						  pst= cdb.connectDBWarehouse().prepareStatement(sql2);
@@ -342,25 +304,13 @@ public class MoveStagingtoDatabase {
 				            if (pst != null) pst.close();
 				            if (rs != null) rs.close();
 				        }
-					  
-//					  xoa
-					  try {
-						  System.out.println("da xoa "+ LH.getMaLH());
-						  pst= cdb.connectDBStaging().prepareStatement(sql3);
-							pst.executeUpdate();
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}finally {
-				            if (pst != null) pst.close();
-				            if (rs != null) rs.close();
-						}
 					  }
 		  }
-
+		  
 		  
 		  //load staging to warehouse
 		  public static void BuiltDataStudent() throws Exception{
-			  	int num;
+			  
 			     String iD;
 			   	 String lastName;
 				 String firstName;
@@ -374,12 +324,11 @@ public class MoveStagingtoDatabase {
 				 int sk_date;
 				 connect=cdb.connectDBStaging();
 				  List<SinhVien> listStudent= new ArrayList<SinhVien>();
-				  String sql1= "select * from stagingdb.sinhvien";
+				  String sql1= "select * from stagingdb.student";
 				  pst=connect.prepareStatement(sql1);
 				  ResultSet rs1= pst.executeQuery();
 				  while(rs1.next()) {
-					  num=rs1.getInt("num");
-					  iD=rs1.getString("id");
+					  iD=rs1.getString("id_student");
 					  firstName=rs1.getString("first_name");
 					  lastName=rs1.getString("last_name");
 					  dayBorn=rs1.getString("dob");
@@ -389,19 +338,15 @@ public class MoveStagingtoDatabase {
 					  email=rs1.getString("email");
 					  address=rs1.getString("address");
 					  note=rs1.getString("note");
-				  listStudent.add(new SinhVien(num,iD,firstName,lastName,dayBorn,iDClass,className,phoneNumber,email,address,note));
+					  sk_date= InsertDate(dayBorn);
+				  listStudent.add(new SinhVien(iD,firstName,lastName,dayBorn,iDClass,className,phoneNumber,email,address,note,sk_date));
 			  }
-				  
 				   connect= cdb.connectDBWarehouse();
-				   String create= "create table if not exists datawarehouse.studentwh(num int(50) Not null AUTO_INCREMENT primary key ,id_student varchar(255),first_name varchar(255),last_name "
-				   		+ "varchar(255),sk_date int(55),dob varchar(255), id_class varchar(255),class_name varchar(255),email varchar(255),number_phone varchar(255),address varchar(255),note varchar(255))";
-				   Connection connection = cdb.connectDBWarehouse();
-					PreparedStatement preparedStatement = connection.prepareStatement(create);
-					preparedStatement.executeUpdate();
+				   System.out.println("d");
 				  for(SinhVien st:listStudent) {
 					  String sql2= "insert into datawarehouse.studentwh(id_student,first_name,last_name,dob,id_class,class_name,number_phone,email,address,note,sk_date) values(?,?,?,?,?,?,?,?,?,?,?) ";
 					  String sql3="update datawarehouse.studentwh set first_name=?,last_name=?,dob=?,id_class=?,class_name=?,number_phone=?,email=?,address=?,note=?,sk_date=? where id_student=?";
-					 String sql4="delete from stagingdb.sinhvien where id= "+st.getId();
+					 
 					  try {
 						  
 						  if(checkforexistence(st.getId())) {
@@ -415,7 +360,7 @@ public class MoveStagingtoDatabase {
 								pst.setString(7,st.getEmail());
 								pst.setString(8,st.getAddress());
 								pst.setString(9,st.getNote());
-								pst.setInt(10,InsertDate(st.getDob()));
+								pst.setInt(10, st.getSk_date());
 								pst.setString(11, st.getId());
 								pst.executeUpdate();
 								System.out.println("Record "+st.getId()+" đã tồn tại đã update");
@@ -431,7 +376,7 @@ public class MoveStagingtoDatabase {
 								pst.setString(8,st.getEmail());
 								pst.setString(9,st.getAddress());
 								pst.setString(10,st.getNote());
-								pst.setInt(11, InsertDate(st.getDob()));
+								pst.setInt(11, st.getSk_date());
 						pst.executeUpdate();
 						}} catch (SQLException e) {
 							// TODO Auto-generated catch block
@@ -440,18 +385,6 @@ public class MoveStagingtoDatabase {
 				            if (pst != null) pst.close();
 				            if (rs != null) rs.close();
 				        }
-					  
-					  //xoa
-					  try {
-						  System.out.println("da xoa "+ st.getId());
-						  pst= cdb.connectDBStaging().prepareStatement(sql4);
-						pst.executeUpdate();
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}finally {
-				            if (pst != null) pst.close();
-				            if (rs != null) rs.close();
-						}
 				  }}
 				 
 				  
@@ -485,7 +418,8 @@ public class MoveStagingtoDatabase {
 		  }
 	public static void main(String[] args) throws Exception {
 		MoveStagingtoDatabase move= new MoveStagingtoDatabase();
-		move.BuiltDataDangKi();
+		move.BuiltDataStudent();
+		//System.out.println(move.InsertDate("02/02/1980"));
 	}
 
 }

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,10 +24,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.mysql.jdbc.DatabaseMetaData;
 
 import Model.ConnectDatabase;
 
+
+
+import Model.ConnectDatabase;
 
 
 public class LoadDate_Dim {
@@ -72,6 +75,8 @@ public class LoadDate_Dim {
 			nameTable = rs.getString("name_table_date_dim");
 			System.out.println(nameTable);
 			field = rs.getString("filed_date_dim");
+			nameTable = rs.getString("name_table_data_dim");
+			field = rs.getString("field_date_dim");
 			datatype = rs.getString("type_date_dim");
 			localdatedim = rs.getString("local_date_dim");
 		}}
@@ -99,7 +104,8 @@ public class LoadDate_Dim {
 			l++;
 		}
 		Connection conWareHouse= cdb.connectDBWarehouse();
-		String sqlDest = "create table if not exists datawarehouse." + nameTable + "( " + arrField[0] + " " + arrDataType[0]
+		String sqlDest = "create TABLE IF NOT EXITS datawarehouse." + nameTable + "( " + arrField[0] + " " + arrDataType[0]
+
 				+ " , " + arrField[1] + " " + arrDataType[1] + ", " + arrField[2] + " "
 				+ arrDataType[3] + "," + arrField[3] + " " + arrDataType[3] + "," + arrField[4] + " " + arrDataType[4]
 				+ "," + arrField[5] + " " + arrDataType[5] + "," + arrField[6] + " " + arrDataType[6] + ","
@@ -117,9 +123,10 @@ public class LoadDate_Dim {
 			System.out.println("Table Ä‘Ã£ tá»“n táº¡i");
 		} else {
 //		10. Thá»±c hiá»‡n cÃ¢u query táº¡o table warehouse
+			System.out.println("Table đã tồn tại");
+//		10. Thực hiện câu query tạo table warehouse
 			pSDataWH = (PreparedStatement) conWareHouse.prepareStatement(sqlDest);
 			pSDataWH.execute();
-
 		}
 		Date_Dim date_dim= new Date_Dim();
 		List<String> date= date_dim.getDate();

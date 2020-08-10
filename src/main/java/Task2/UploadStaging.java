@@ -27,7 +27,7 @@ public class UploadStaging {
 		cdb = new ConnectDatabase();
 	}
 
-//	Lấy url local trong configuration với config_id tương ứng
+//	Láº¥y url local trong configuration vá»›i config_id tÆ°Æ¡ng á»©ng
 	public String getUrlLocal(int config_id) throws SQLException {
 		String result = "";
 		Connection connection = cdb.connectDBControl();
@@ -41,7 +41,7 @@ public class UploadStaging {
 		return result;
 	}
 
-//	Lấy column_list và variable_list trong configuration với config_id tương ứng
+//	Láº¥y column_list vÃ  variable_list trong configuration vá»›i config_id tÆ°Æ¡ng á»©ng
 	public String getColumnList(int config_id) throws SQLException {
 		String result = "";
 		Connection connection = cdb.connectDBControl();
@@ -59,7 +59,7 @@ public class UploadStaging {
 		return result;
 	}
 
-//	Tạo table trong stagingdb
+//	Táº¡o table trong stagingdb
 	public void createTableInStaging(String tableName, int config_id) throws SQLException {
 		String result = "";
 		StringBuilder stringBuilder = new StringBuilder();
@@ -136,8 +136,8 @@ public class UploadStaging {
 		return false;
 
 	}
-
 //	import dữ liệu vào table monhoc
+
 	public boolean loadMonHoc(MonHoc monhoc) {
 		String sql = "insert into stagingdb.monhoc(ma_mh, ten_mh, tin_chi, khoa_BMQuanLi, khoa_BMDangSuDung, ghi_chu) values(?, ?, ?, ?, ?, ?)";
 		try {
@@ -191,10 +191,10 @@ public class UploadStaging {
 
 		XLSXReader xlsxReader = new XLSXReader();
 
-//		Lấy status của file trong log
+//		Láº¥y status cá»§a file trong log
 		log.getLog(Status.ER);
 
-//		Lấy name file trong log
+//		Láº¥y name file trong log
 		String fileName = log.getFile_name();
 
 		boolean loadSuccess = false;
@@ -304,7 +304,7 @@ public class UploadStaging {
 //		}
 		Log log = new Log();
 		String sinhvien = "sinhvien";
-//		uploadStaging.uploadStaging(log);
+		uploadStaging.uploadStaging(log);
 //		uploadStaging.createTableInStaging("dangky", 3);
 //		System.out.println(uploadStaging.loadToStaging(log, "sinhvien", 1));
 	}

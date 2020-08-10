@@ -10,6 +10,13 @@ public class Lop {
 		super();
 	}
 
+	public Lop(String maLH, String maMH, String namHoc) {
+		super();
+		this.maLH = maLH;
+		this.maMH = maMH;
+		this.namHoc = namHoc;
+	}
+
 	public Lop(int num, String maLH, String maMH, String namHoc) {
 		super();
 		this.num = num;

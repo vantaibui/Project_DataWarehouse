@@ -144,7 +144,7 @@ public class Log {
 	}
 
 	public Log getLog(Status status) {
-		sql = "SELECT * FROM controldb.log WHERE file_status = ? limit 1";
+		sql = "SELECT * FROM controldb.log WHERE file_status = ?";
 		try {
 			pst = cdc.connectDBControl().prepareStatement(sql);
 			pst.setString(1, status.name());
@@ -164,12 +164,6 @@ public class Log {
 		return this;
 	}
 
-	public boolean getFileName(String fileName) {
-		sql = "select file_name from controldb.log where file_name like " + "'" + fileName + "%" + "'";
-		System.out.println(sql);
-		return false;
-
-	}
 
 	public void updateLog(Status new_status, int staging_load_count) {
 		sql = "UPDATE controldb.log SET file_status = ?,staging_load_count = ? WHERE data_file_id = ?";
@@ -183,7 +177,17 @@ public class Log {
 			e.printStackTrace();
 		}
 	}
-
+	public void updateLogDW(Status new_status,Log log) {
+		sql = "UPDATE controldb.log SET file_status = ? WHERE data_file_id = ?";
+		try {
+			pst = cdc.connectDBControl().prepareStatement(sql);
+			pst.setString(1, new_status.name());
+			pst.setInt(2, log.getData_file_id() );
+			pst.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void main(String[] args) {
 		new Log().insertListLog();
 
