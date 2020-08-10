@@ -62,7 +62,6 @@ public class ConnectDatabase {
 
 	}
 
-	
 	public ArrayList<ConnectInfo> getConnectionDataConfig() throws SQLException {
 		ArrayList<ConnectInfo> listConnect = new ArrayList<ConnectInfo>();
 		connection = connectDBControl();
@@ -104,7 +103,7 @@ public class ConnectDatabase {
 	public static void main(String[] args) throws SQLException {
 		ConnectDatabase cdc = new ConnectDatabase();
 //		cdc.connectDBControl();
-		cdc.connectDBStaging();
+//		cdc.connectDBStaging();
 
 	}
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import Constrants.Status;;
 
 public class Log {
-	static String PATH = "Data/Register";
+	static String PATH = "Data/Student";
 
 	private int data_file_id;
 	private String file_name;

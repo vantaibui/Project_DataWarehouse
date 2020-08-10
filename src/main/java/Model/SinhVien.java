@@ -12,10 +12,10 @@ public class SinhVien {
 	private String email;
 	private String address;
 	private String note;
-	
 	public SinhVien() {
 		super();
 	}
+	
 	public SinhVien(int num, String id, String first_name, String last_name, String dob, String id_class,
 			String class_name, String number_phone, String email, String address, String note) {
 		super();
